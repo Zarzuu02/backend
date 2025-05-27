@@ -9,7 +9,7 @@ const upload = require('./upload');
 
 router.get('/:id', (req, res) => {
     const { id } = req.params;
-    const query = 'SELECT * FROM Usuarios WHERE id = ?';
+    const query = 'SELECT * FROM usuarios WHERE id = ?';
     
     connection.query(query, [id], (err, results) => {
         if (err) {
@@ -24,7 +24,7 @@ router.get('/:id', (req, res) => {
 
         // Verificamos el tipo del usuario y devolver la información correspondiente
         if (usuario.tipo === 'peluquero') {
-            const peluqueroQuery = 'SELECT * FROM Peluqueros WHERE usuario_id = ?';
+            const peluqueroQuery = 'SELECT * FROM peluqueros WHERE usuario_id = ?';
             connection.query(peluqueroQuery, [usuario.id], (err, peluqueroResults) => {
                 if (err) {
                     return res.status(500).json({ error: err.message });
@@ -46,7 +46,7 @@ router.get('/:id', (req, res) => {
 // Obtener un usuario por email y contraseña
 router.post('/login', (req, res) => {
   const { email, contrasena } = req.body;
-  const query = 'SELECT * FROM Usuarios WHERE email = ? AND contrasena = ?';
+  const query = 'SELECT * FROM usuarios WHERE email = ? AND contrasena = ?';
 
   connection.query(query, [email, contrasena], (err, results) => {
       if (err) {
@@ -69,7 +69,7 @@ router.post('/login', (req, res) => {
 
       // Si es peluquero
       if (tipo === 'peluquero') {
-        const peluqueroQuery = 'SELECT * FROM Peluqueros WHERE usuario_id = ?';
+        const peluqueroQuery = 'SELECT * FROM peluqueros WHERE usuario_id = ?';
         connection.query(peluqueroQuery, [usuario.id], (err, peluqueroResults) => {
           if (err) {
             console.error(err);
@@ -109,7 +109,7 @@ router.post('/login', (req, res) => {
 // Crear un nuevo usuario
 router.post('/insertar', (req, res) => {
   const { nombre, email, contrasena, telefono, sexo, tipo } = req.body;
-  const query = 'INSERT INTO Usuarios (nombre, email, contrasena, telefono, sexo, tipo) VALUES (?, ?, ?, ?, ?, ?)';
+  const query = 'INSERT INTO usuarios (nombre, email, contrasena, telefono, sexo, tipo) VALUES (?, ?, ?, ?, ?, ?)';
 
   connection.query(query, [nombre, email, contrasena, telefono, sexo, tipo], (err, results) => {
       if (err) {
@@ -133,11 +133,11 @@ router.put('/actualizar/:id', upload.single('imagen'), (req, res) => {
   // Si hay nueva imagen, la incluimos en la actualización
   if (req.file) {
     const imagen = `/uploads/${req.file.filename}`;
-    query = 'UPDATE Usuarios SET nombre = ?, email = ?, contrasena = ?, telefono = ?, sexo = ?, imagen = ? WHERE id = ?';
+    query = 'UPDATE usuarios SET nombre = ?, email = ?, contrasena = ?, telefono = ?, sexo = ?, imagen = ? WHERE id = ?';
     params = [nombre, email, contrasena, telefono, sexo, imagen, id];
   } else {
     // Si no hay imagen, no la actualizamos
-    query = 'UPDATE Usuarios SET nombre = ?, email = ?, contrasena = ?, telefono = ?, sexo = ? WHERE id = ?';
+    query = 'UPDATE usuarios SET nombre = ?, email = ?, contrasena = ?, telefono = ?, sexo = ? WHERE id = ?';
     params = [nombre, email, contrasena, telefono, sexo, id];
   }
 
@@ -166,7 +166,7 @@ router.put('/actualizar/imagen/:id', upload.single('imagen'), (req, res) => {
 
   console.log('Datos recibidos:', { imagen });
 
-  const query = 'UPDATE Usuarios SET imagen = ? WHERE id = ?';
+  const query = 'UPDATE usuarios SET imagen = ? WHERE id = ?';
 
   connection.query(query, [imagen, req.params.id], (err, results) => {
     if (err) {
@@ -188,7 +188,7 @@ const fs = require('fs');
 router.get('/imagen/:id', (req, res) => {
   const { id } = req.params;
 
-  const query = 'SELECT imagen FROM Usuarios WHERE id = ?';
+  const query = 'SELECT imagen FROM usuarios WHERE id = ?';
 
   connection.query(query, [id], (err, results) => {
     if (err) {
@@ -217,7 +217,7 @@ router.get('/imagen/:id', (req, res) => {
 // Eliminar un usuario por ID
 router.delete('/eliminar/:id', (req, res) => {
     const { id } = req.params;
-    const query = 'DELETE FROM Usuarios WHERE id = ?';
+    const query = 'DELETE FROM usuarios WHERE id = ?';
   
     connection.query(query, [id], (err, results) => {
       if (err) {

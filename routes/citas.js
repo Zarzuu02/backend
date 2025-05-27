@@ -41,17 +41,17 @@ router.get('/cita/:id', (req, res) => {
 
   const query = `
     SELECT Citas.id AS cita_id, Citas.fecha, Citas.hora, Citas.estado, 
-           Clientes.id AS cliente_id, U.nombre AS cliente_nombre, U.email AS cliente_email, 
+           clientes.id AS cliente_id, U.nombre AS cliente_nombre, U.email AS cliente_email, 
            U.telefono AS cliente_telefono, U.sexo AS cliente_sexo,
-           Peluqueros.id AS peluquero_id, P.nombre AS peluquero_nombre, 
+           peluqueros.id AS peluquero_id, P.nombre AS peluquero_nombre, 
            P.email AS peluquero_email, P.telefono AS peluquero_telefono, 
-           P.sexo AS peluquero_sexo, Peluqueros.especialidad, 
-           Peluqueros.horario_inicio, Peluqueros.horario_fin
+           P.sexo AS peluquero_sexo, peluqueros.especialidad, 
+           peluqueros.horario_inicio, peluqueros.horario_fin
     FROM Citas
-    JOIN Clientes ON Citas.cliente_id = Clientes.id
-    JOIN Usuarios U ON Clientes.usuario_id = U.id
-    JOIN Peluqueros ON Citas.peluquero_id = Peluqueros.id
-    JOIN Usuarios P ON Peluqueros.usuario_id = P.id
+    JOIN clientes ON Citas.cliente_id = clientes.id
+    JOIN usuarios U ON clientes.usuario_id = U.id
+    JOIN peluqueros ON Citas.peluquero_id = peluqueros.id
+    JOIN usuarios P ON peluqueros.usuario_id = P.id
     WHERE Citas.id = ?;
   `;
 
@@ -227,8 +227,8 @@ router.get('/citas/hoy', (req, res) => {
       u1.nombre AS cliente_nombre,
       u2.nombre AS peluquero_nombre
     FROM citas c
-    JOIN Usuarios u1 ON c.cliente_id = u1.id
-    JOIN Usuarios u2 ON c.peluquero_id = u2.id
+    JOIN usuarios u1 ON c.cliente_id = u1.id
+    JOIN usuarios u2 ON c.peluquero_id = u2.id
     WHERE c.fecha = CURDATE() 
     Order BY c.fecha ASC AND c.hora ASC
   `;
@@ -289,8 +289,8 @@ router.get('/todas/pendientes', (req, res) => {
       u1.nombre AS cliente_nombre,
       u2.nombre AS peluquero_nombre
     FROM citas c
-    JOIN Usuarios u1 ON c.cliente_id = u1.id
-    JOIN Usuarios u2 ON c.peluquero_id = u2.id
+    JOIN usuarios u1 ON c.cliente_id = u1.id
+    JOIN usuarios u2 ON c.peluquero_id = u2.id
     WHERE c.estado = 'pendiente'
     ORDER BY c.fecha ASC, c.hora ASC
   `;
@@ -351,8 +351,8 @@ router.get('/hoy/all', (req, res) => {
         u1.nombre AS cliente_nombre,
         u2.nombre AS peluquero_nombre
       FROM citas c
-      JOIN Usuarios u1 ON c.cliente_id = u1.id
-      JOIN Usuarios u2 ON c.peluquero_id = u2.id
+      JOIN usuarios u1 ON c.cliente_id = u1.id
+      JOIN usuarios u2 ON c.peluquero_id = u2.id
       WHERE c.fecha = CURDATE()
       ORDER BY c.hora ASC
     `;

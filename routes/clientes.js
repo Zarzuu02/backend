@@ -9,18 +9,18 @@ router.get('/cliente/:id', (req, res) => {
 
   const query = `
     SELECT 
-      Clientes.id AS id,
-      Usuarios.nombre,
-      Usuarios.email,
-      Usuarios.telefono,
-      Usuarios.sexo,
-      Usuarios.fecha_registro,
-      Usuarios.imagen,
-      Usuarios.tipo,
-      Usuarios.contrasena
-    FROM Clientes
-    JOIN Usuarios ON Clientes.usuario_id = Usuarios.id
-    WHERE Clientes.id = ?`;
+      clientes.id AS id,
+      usuarios.nombre,
+      usuarios.email,
+      usuarios.telefono,
+      usuarios.sexo,
+      usuarios.fecha_registro,
+      usuarios.imagen,
+      usuarios.tipo,
+      usuarios.contrasena
+    FROM clientes
+    JOIN usuarios ON clientes.usuario_id = usuarios.id
+    WHERE clientes.id = ?`;
 
   connection.query(query, [id], (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -52,7 +52,7 @@ router.post('/agregar', (req, res) => {
   const { nombre, email, contrasena, telefono, sexo } = req.body;
 
   const queryUsuario = `
-    INSERT INTO Usuarios (nombre, email, contrasena, telefono, sexo, tipo) 
+    INSERT INTO usuarios (nombre, email, contrasena, telefono, sexo, tipo) 
     VALUES (?, ?, ?, ?, ?, 'cliente');
   `;
 
@@ -62,7 +62,7 @@ router.post('/agregar', (req, res) => {
     const usuarioId = result.insertId;
 
     const queryCliente = `
-      INSERT INTO Clientes (usuario_id) 
+      INSERT INTO clientes (usuario_id) 
       VALUES (?);
     `;
 
@@ -81,7 +81,7 @@ router.post('/register', (req, res) => {
 
   // Consulta para verificar si el email o teléfono ya existen
   const checkQuery = `
-    SELECT * FROM Usuarios WHERE email = ? OR telefono = ?;
+    SELECT * FROM usuarios WHERE email = ? OR telefono = ?;
   `;
 
   connection.query(checkQuery, [email, telefono], (err, results) => {
@@ -93,9 +93,9 @@ router.post('/register', (req, res) => {
       return res.status(400).json({ error: "El correo o teléfono ya están en uso" });
     }
 
-    // Si no existen, insertamos el usuario en la tabla 'Usuarios'
+    // Si no existen, insertamos el usuario en la tabla 'usuarios'
     const queryUsuario = `
-      INSERT INTO Usuarios (nombre, email, contrasena, telefono, sexo) 
+      INSERT INTO usuarios (nombre, email, contrasena, telefono, sexo) 
       VALUES (?, ?, ?, ?, ?);
     `;
 
@@ -107,9 +107,9 @@ router.post('/register', (req, res) => {
       // Obtener el ID del usuario insertado
       const usuarioId = result.insertId;
 
-      // Ahora insertamos el cliente en la tabla 'Clientes' y asociamos el 'usuario_id'
+      // Ahora insertamos el cliente en la tabla 'clientes' y asociamos el 'usuario_id'
       const queryCliente = `
-        INSERT INTO Clientes (usuario_id) 
+        INSERT INTO clientes (usuario_id) 
         VALUES (?);
       `;
 

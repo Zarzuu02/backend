@@ -9,20 +9,20 @@ router.get('/all', (req, res) => {
 
   const query = `
     SELECT 
-      Usuarios.id AS id,
-      Usuarios.nombre,
-      Usuarios.email,
-      Usuarios.contrasena,
-      Usuarios.telefono,
-      Usuarios.sexo,
-      Usuarios.tipo,
-      Usuarios.fecha_registro,
-      Usuarios.imagen,
-      Peluqueros.especialidad,
-      Peluqueros.horario_inicio,
-      Peluqueros.horario_fin
-    FROM Peluqueros
-    JOIN Usuarios ON Peluqueros.usuario_id = Usuarios.id`;
+      usuarios.id AS id,
+      usuarios.nombre,
+      usuarios.email,
+      usuarios.contrasena,
+      usuarios.telefono,
+      usuarios.sexo,
+      usuarios.tipo,
+      usuarios.fecha_registro,
+      usuarios.imagen,
+      peluqueros.especialidad,
+      peluqueros.horario_inicio,
+      peluqueros.horario_fin
+    FROM peluqueros
+    JOIN usuarios ON peluqueros.usuario_id = usuarios.id`;
 
   connection.query(query, (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -42,20 +42,20 @@ router.get('/:id', (req, res) => {
 
   const query = `
     SELECT 
-      Usuarios.id AS id,
-      Usuarios.nombre,
-      Usuarios.email,
-      Usuarios.telefono,
-      Usuarios.sexo,
-      Usuarios.tipo,
-      Usuarios.fecha_registro,
-      Usuarios.imagen,
-      Peluqueros.especialidad,
-      Peluqueros.horario_inicio,
-      Peluqueros.horario_fin
-    FROM Peluqueros
-    JOIN Usuarios ON Peluqueros.usuario_id = Usuarios.id
-    WHERE Peluqueros.id = ?`;
+      usuarios.id AS id,
+      usuarios.nombre,
+      usuarios.email,
+      usuarios.telefono,
+      usuarios.sexo,
+      usuarios.tipo,
+      usuarios.fecha_registro,
+      usuarios.imagen,
+      peluqueros.especialidad,
+      peluqueros.horario_inicio,
+      peluqueros.horario_fin
+    FROM peluqueros
+    JOIN usuarios ON peluqueros.usuario_id = usuarios.id
+    WHERE peluqueros.id = ?`;
 
   connection.query(query, [id], (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -221,8 +221,8 @@ router.get('/:id/citas', (req, res) => {
 //       u1.nombre AS cliente_nombre,
 //       u2.nombre AS peluquero_nombre
 //     FROM citas c
-//     JOIN Usuarios u1 ON c.cliente_id = u1.id
-//     JOIN Usuarios u2 ON c.peluquero_id = u2.id
+//     JOIN usuarios u1 ON c.cliente_id = u1.id
+//     JOIN usuarios u2 ON c.peluquero_id = u2.id
 //     WHERE c.fecha = CURDATE() AND c.peluquero_id = ?
 //     ORDER BY c.hora ASC
 //   `;
@@ -271,8 +271,8 @@ router.get('/:id/citas/hoy', (req, res) => {
         u1.nombre AS cliente_nombre,
         u2.nombre AS peluquero_nombre
       FROM citas c
-      JOIN Usuarios u1 ON c.cliente_id = u1.id
-      JOIN Usuarios u2 ON c.peluquero_id = u2.id
+      JOIN usuarios u1 ON c.cliente_id = u1.id
+      JOIN usuarios u2 ON c.peluquero_id = u2.id
       WHERE c.fecha = CURDATE() AND c.peluquero_id = ?
       ORDER BY c.hora ASC
     `;
@@ -322,8 +322,8 @@ router.get('/:id/citas/todas', (req, res) => {
         u1.nombre AS cliente_nombre,
         u2.nombre AS peluquero_nombre
       FROM citas c
-      JOIN Usuarios u1 ON c.cliente_id = u1.id
-      JOIN Usuarios u2 ON c.peluquero_id = u2.id
+      JOIN usuarios u1 ON c.cliente_id = u1.id
+      JOIN usuarios u2 ON c.peluquero_id = u2.id
       WHERE c.peluquero_id = ?
       ORDER BY c.fecha DESC, c.hora DESC
     `;
@@ -356,9 +356,9 @@ router.put('/actualizar/:id', (req, res) => {
 
   console.log('Datos recibidos:', { nombre, email, telefono, sexo, imagen, contrasena, especialidad, horario_inicio, horario_fin });
 
-  // Primero actualizamos los datos en la tabla Usuarios
+  // Primero actualizamos los datos en la tabla usuarios
   let updateUsuarioQuery = `
-    UPDATE Usuarios
+    UPDATE usuarios
     SET nombre = ?, email = ?, telefono = ?, sexo = ?
   `;
   const usuarioParams = [nombre, email, telefono, sexo];
@@ -382,7 +382,7 @@ router.put('/actualizar/:id', (req, res) => {
     }
 
     // Luego buscamos el ID del peluquero correspondiente al usuario
-    const getPeluqueroIdQuery = `SELECT id FROM Peluqueros WHERE usuario_id = ?`;
+    const getPeluqueroIdQuery = `SELECT id FROM peluqueros WHERE usuario_id = ?`;
     connection.query(getPeluqueroIdQuery, [id], (err, results) => {
       if (err) {
         return res.status(500).json({ error: 'Error al buscar el peluquero', detalles: err.message });
@@ -396,7 +396,7 @@ router.put('/actualizar/:id', (req, res) => {
 
       // Actualizamos los datos del peluquero
       const updatePeluqueroQuery = `
-        UPDATE Peluqueros
+        UPDATE peluqueros
         SET especialidad = ?, horario_inicio = ?, horario_fin = ?
         WHERE id = ?
       `;
@@ -429,28 +429,28 @@ router.post('/anadir', (req, res) => {
   } = req.body;
   
 
-  // Insertar en la tabla Usuarios
+  // Insertar en la tabla usuarios
   const insertUsuarioQuery = `
-    INSERT INTO Usuarios (nombre, email, telefono, sexo, tipo, imagen, contrasena, fecha_registro)
+    INSERT INTO usuarios (nombre, email, telefono, sexo, tipo, imagen, contrasena, fecha_registro)
     VALUES (?, ?, ?, ?, 'peluquero', ?, ?, NOW())
   `;
 
   connection.query(insertUsuarioQuery, [nombre, email, telefono, sexo, imagen, contrasena], (err, usuarioResult) => {
     if (err) {
-      return res.status(500).json({ error: 'Error al insertar en Usuarios', detalles: err.message });
+      return res.status(500).json({ error: 'Error al insertar en usuarios', detalles: err.message });
     }
 
     const usuarioId = usuarioResult.insertId;
 
-    // Insertar en la tabla Peluqueros
+    // Insertar en la tabla peluqueros
     const insertPeluqueroQuery = `
-      INSERT INTO Peluqueros (usuario_id, especialidad, horario_inicio, horario_fin)
+      INSERT INTO peluqueros (usuario_id, especialidad, horario_inicio, horario_fin)
       VALUES (?, ?, ?, ?)
     `;
 
     connection.query(insertPeluqueroQuery, [usuarioId, especialidad, horario_inicio, horario_fin], (err, peluqueroResult) => {
       if (err) {
-        return res.status(500).json({ error: 'Error al insertar en Peluqueros', detalles: err.message });
+        return res.status(500).json({ error: 'Error al insertar en peluqueros', detalles: err.message });
       }
 
       res.status(201).json({ message: 'Peluquero creado exitosamente', peluqueroId: peluqueroResult.insertId });
