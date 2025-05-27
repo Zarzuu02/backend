@@ -9,7 +9,12 @@ const app = express();
 
 
 app.use(bodyParser.json());
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:51003', // o '*', si solo estás testeando
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true
+}));
 
 app.use(express.json({ limit: '50mb' })); 
 
