@@ -40,19 +40,19 @@ router.get('/cita/:id', (req, res) => {
   const { id } = req.params;
 
   const query = `
-    SELECT Citas.id AS cita_id, Citas.fecha, Citas.hora, Citas.estado, 
+    SELECT cita.id AS cita_id, cita.fecha, cita.hora, cita.estado, 
            clientes.id AS cliente_id, U.nombre AS cliente_nombre, U.email AS cliente_email, 
            U.telefono AS cliente_telefono, U.sexo AS cliente_sexo,
            peluqueros.id AS peluquero_id, P.nombre AS peluquero_nombre, 
            P.email AS peluquero_email, P.telefono AS peluquero_telefono, 
            P.sexo AS peluquero_sexo, peluqueros.especialidad, 
            peluqueros.horario_inicio, peluqueros.horario_fin
-    FROM Citas
-    JOIN clientes ON Citas.cliente_id = clientes.id
+    FROM cita
+    JOIN clientes ON cita.cliente_id = clientes.id
     JOIN usuarios U ON clientes.usuario_id = U.id
-    JOIN peluqueros ON Citas.peluquero_id = peluqueros.id
+    JOIN peluqueros ON cita.peluquero_id = peluqueros.id
     JOIN usuarios P ON peluqueros.usuario_id = P.id
-    WHERE Citas.id = ?;
+    WHERE cita.id = ?;
   `;
 
   connection.query(query, [id], (err, results) => {
@@ -160,7 +160,7 @@ router.post('/crear', (req, res) => {
 // Eliminar una cita por ID
 router.delete('/eliminar/:id', (req, res) => {
   const { id } = req.params;
-  const query = 'DELETE FROM Citas WHERE id = ?';
+  const query = 'DELETE FROM cita WHERE id = ?';
 
   connection.query(query, [id], (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -340,7 +340,7 @@ router.put('/actualizar/:id', (req, res) => {
 
 router.get('/hoy/all', (req, res) => {
   
-    const obtenerCitasQuery = `
+    const obtenercitaQuery = `
       SELECT 
         c.id,
         DATE_FORMAT(c.fecha, '%Y-%m-%d') AS fecha,
@@ -357,7 +357,7 @@ router.get('/hoy/all', (req, res) => {
       ORDER BY c.hora ASC
     `;
 
-    connection.query(obtenerCitasQuery, (err, citas) => {
+    connection.query(obtenercitaQuery, (err, citas) => {
       if (err) {
         return res.status(500).json({ error: 'Error al obtener las citas de hoy', detalles: err.message });
       }
