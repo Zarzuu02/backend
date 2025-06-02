@@ -12,6 +12,7 @@ app.use(bodyParser.json());
 // app.use(cors());
 app.use(cors({
   origin: 'https://peluqueria-17cae.web.app', // dominio de tu frontend desplegado
+  
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true
 }));
