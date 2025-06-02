@@ -160,7 +160,7 @@ router.post('/crear', (req, res) => {
 // Eliminar una cita por ID
 router.delete('/eliminar/:id', (req, res) => {
   const { id } = req.params;
-  const query = 'DELETE FROM cita WHERE id = ?';
+  const query = 'DELETE FROM citas WHERE id = ?';
 
   connection.query(query, [id], (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
