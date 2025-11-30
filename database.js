@@ -3,11 +3,11 @@ require('dotenv').config();  // Cargar variables de entorno
 
 // Crear la conexión a la base de datos
 const connection = mysql.createConnection({
-  host: process.env.DB_HOST,    // "localhost" o IP del servidor
-  user: process.env.DB_USER,    // Usuario de la base de datos
-  password: process.env.DB_PASS, // Contraseña
-  database: process.env.DB_NAME, // Nombre de la base de datos
-  port: process.env.DB_PORT || 3306, // Puerto por defecto 3306
+  host: brygzffuvkjbzixggbaf-mysql.services.clever-cloud.com,    // "localhost" o IP del servidor
+  user: ufm0m7fgcymt85zh,    // Usuario de la base de datos
+  password: IGBnU0ly3Qb90c5yjcvZ, // Contraseña
+  database: brygzffuvkjbzixggbaf, // Nombre de la base de datos
+  port: 3306 || 3306, // Puerto por defecto 3306
 });
 
 // Verificar si la conexión fue exitosa
