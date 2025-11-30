@@ -1,24 +1,30 @@
 const mysql = require('mysql2');
-require('dotenv').config();  // Para cargar las variables de entorno
+require('dotenv').config();  // Cargar variables de entorno
 
-
-// Crear una conexión a la base de datos
+// Crear la conexión a la base de datos
 const connection = mysql.createConnection({
-  host: process.env.DB_HOST,  // "localhost" o la IP de tu servidor
-  user: process.env.DB_USER,  // El nombre de usuario de tu base de datos
-  password: process.env.DB_PASS,  // La contraseña de tu base de datos
-  database: process.env.DB_NAME,  // El nombre de la base de datos
-  port: process.env.DB_PORT,  // El puerto por defecto es 3306
+  host: process.env.DB_HOST,    // "localhost" o IP del servidor
+  user: process.env.DB_USER,    // Usuario de la base de datos
+  password: process.env.DB_PASS, // Contraseña
+  database: process.env.DB_NAME, // Nombre de la base de datos
+  port: process.env.DB_PORT || 3306, // Puerto por defecto 3306
 });
 
 // Verificar si la conexión fue exitosa
 connection.connect((err) => {
   if (err) {
-    console.error('❌ Error de conexión a la base de datos:', err);
+    console.error('❌ Error de conexión a la base de datos:', err.message);
     return;
   }
   console.log('✅ Conexión exitosa a la base de datos MySQL');
 });
 
-// Exportar la conexión para usarla en otras partes de tu aplicación
+// Manejo de errores de conexión durante la ejecución
+connection.on('error', (err) => {
+  console.error('❌ Error de conexión MySQL:', err.code);
+  if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+    console.log('La conexión se perdió. Considera reconectar.');
+  }
+});
+
 module.exports = connection;
